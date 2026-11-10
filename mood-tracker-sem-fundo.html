@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mood Diary (sem fundo)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Nunito:wght@400;600;700&display=swap">
+<style>
+:root{--bg:transparent;--card:rgba(255,255,255,.7);--ink:#5a4650;--mute:#b497a5;--line:rgba(239,134,171,.2);--rose:#ef86ab;--soft:rgba(239,134,171,.13);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:transparent;--card:rgba(255,255,255,.08);--ink:#f1dfe7;--mute:#a88b9a;--line:rgba(245,155,187,.22);--rose:#f59bbb;--soft:rgba(245,155,187,.15);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:transparent;--card:rgba(255,255,255,.08);--ink:#f1dfe7;--mute:#a88b9a;--line:rgba(245,155,187,.22);--rose:#f59bbb;--soft:rgba(245,155,187,.15);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{background:transparent}
+body{margin:0;background:transparent;color:var(--ink);font:13px/1.35 "Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;padding:12px}
+.wrap{max-width:440px;margin:0 auto;background:none;padding:4px 2px 2px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+h1{font:italic 600 21px/1 "Cormorant Garamond",Georgia,serif;margin:0;color:var(--rose)}
+.tabs{display:flex;gap:2px;background:var(--soft);border-radius:99px;padding:2px}
+.tabs button{border:0;background:none;color:var(--mute);padding:3px 11px;border-radius:99px;font:inherit;font-weight:700;font-size:12px;cursor:pointer}
+.tabs button.on{background:var(--card);color:var(--rose);box-shadow:0 1px 3px rgba(239,134,171,.25)}
+.nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;color:var(--mute);font-weight:700;font-size:12px}
+.nav button{border:0;background:var(--soft);color:var(--rose);width:22px;height:22px;border-radius:50%;font-size:14px;line-height:1;cursor:pointer;padding:0}
+.nav button:disabled{opacity:.3;cursor:default}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.d{border:0;background:none;color:var(--mute);padding:4px 0 3px;border-radius:14px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.d b{font-size:12px;color:var(--ink);font-weight:700}
+.d.sel{background:var(--soft)}
+.d.today b{color:var(--rose)}
+.d:disabled{opacity:.35;cursor:default}
+.f{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--line)}
+.f.e{font-size:11px;color:var(--mute);background:transparent;border:1.5px dashed var(--line)}
+.pick{display:flex;justify-content:center;gap:8px;margin:10px 0 6px}
+.m{width:34px;height:34px;border-radius:50%;border:2px solid transparent;background:var(--soft);font-size:18px;cursor:pointer;padding:0;transition:transform .12s}
+.m:hover:not(:disabled){transform:scale(1.12)}
+.m.on{border-color:var(--rose)}
+.cap{text-align:center;color:var(--mute);font-size:11.5px;font-weight:600;margin-bottom:5px}
+.note{display:block;width:100%;border:0;border-radius:99px;background:var(--soft);color:var(--ink);font:inherit;font-size:12px;padding:6px 12px;outline:none}
+.note::placeholder{color:var(--mute)}
+.sum{display:flex;align-items:center;gap:8px;margin-top:9px;color:var(--mute);font-size:11.5px;font-weight:700}
+.sum span{white-space:nowrap}
+.dist{display:flex;height:7px;border-radius:5px;overflow:hidden;background:var(--line);flex:1}
+.dist i{display:block;height:100%}
+.mrow{display:grid;grid-template-columns:62px 46px 1fr auto;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.mrow:first-child{border-top:0}
+.mrow .mn{font-weight:700}.mrow .mn small{color:var(--mute);font-weight:600;margin-left:2px}
+.mrow .av{font-weight:700;color:var(--ink)}
+.dl{font-size:11px;font-weight:700;min-width:34px;text-align:right}
+.up{color:#4fae8d}.down{color:#e07a8f}
+.legend{display:flex;justify-content:center;gap:9px;color:var(--mute);font-size:11px;margin:0 0 6px}
+.empty{color:var(--mute);text-align:center;padding:18px 6px;font-size:12px}
+details{margin-top:8px;color:var(--mute);font-size:11px;text-align:center}
+summary{cursor:pointer;display:inline-block}
+textarea{width:100%;height:56px;margin-top:6px;background:var(--soft);color:var(--ink);border:0;border-radius:12px;padding:7px;font:11px monospace}
+.btns{display:flex;gap:6px;justify-content:center;margin-top:5px}
+.btns button{border:0;background:var(--soft);color:var(--rose);border-radius:99px;padding:3px 12px;font:inherit;font-weight:700;cursor:pointer}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><h1>mood diary</h1><div class="tabs"><button id="tw" class="on">semana</button><button id="tm">meses</button></div></div>
+<section id="vw">
+<div class="nav"><button id="prev" aria-label="Semana anterior">‹</button><span id="range"></span><button id="next" aria-label="Próxima semana">›</button></div>
+<div class="week" id="week"></div>
+<div class="pick" id="pick"></div>
+<div class="cap" id="cap"></div>
+<input class="note" id="note" placeholder="uma notinha sobre o dia…">
+<div class="sum" id="sum"></div>
+</section>
+<section id="vm" class="hide"><div class="legend" id="legend"></div><div id="months"></div></section>
+<details><summary>backup</summary>
+<textarea id="bk" spellcheck="false"></textarea>
+<div class="btns"><button id="cp">copiar</button><button id="rs">restaurar</button></div>
+<div id="msg"></div>
+</details>
+</div>
+<script>
+var MOODS=[{v:1,e:"😞",l:"Péssimo",c:"#a9b4e0"},{v:2,e:"😕",l:"Mal",c:"#c9b1e3"},{v:3,e:"😐",l:"Ok",c:"#f0c9d6"},{v:4,e:"🙂",l:"Bem",c:"#f5a9c0"},{v:5,e:"🥰",l:"Ótimo",c:"#ef7fa6"}];
+var MN=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+var DN=["seg","ter","qua","qui","sex","sáb","dom"],DF=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+var SK="moodtracker.v1",mem={},data={},off=0,sel=null;
+function load(){try{var s=localStorage.getItem(SK);data=s?JSON.parse(s):{}}catch(e){data=mem}}
+function save(){mem=data;try{localStorage.setItem(SK,JSON.stringify(data))}catch(e){}}
+function p(n){return n<10?"0"+n:""+n}
+function key(d){return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
+function mood(v){return MOODS[Math.max(0,Math.min(4,Math.round(v)-1))]}
+function wstart(o){var t=new Date();var dw=(t.getDay()+6)%7;return new Date(t.getFullYear(),t.getMonth(),t.getDate()-dw+o*7)}
+function dist(vals){var n=vals.length||1;return MOODS.map(function(m){var c=vals.filter(function(v){return v==m.v}).length;return '<i title="'+m.l+': '+c+'" style="width:'+(c/n*100)+'%;background:'+m.c+'"></i>'}).join("")}
+function put(k,r){if(!r.m&&!r.n)delete data[k];else data[k]=r;save()}
+function renderWeek(){
+  var s=wstart(off),today=key(new Date()),html="",vals=[],keys=[];
+  var e=new Date(s.getFullYear(),s.getMonth(),s.getDate()+6);
+  document.getElementById("range").textContent=s.getDate()+" "+MN[s.getMonth()].slice(0,3).toLowerCase()+" – "+e.getDate()+" "+MN[e.getMonth()].slice(0,3).toLowerCase();
+  document.getElementById("next").disabled=off>=0;
+  for(var i=0;i<7;i++){var d=new Date(s.getFullYear(),s.getMonth(),s.getDate()+i);keys.push(key(d))}
+  if(keys.indexOf(sel)<0)sel=keys.indexOf(today)>=0?today:keys[0];
+  keys.forEach(function(k,i){
+    var r=data[k]||{},fut=k>today,m=r.m?MOODS[r.m-1]:null,dd=+k.slice(8);
+    if(r.m)vals.push(r.m);
+    html+='<button class="d'+(k==sel?" sel":"")+(k==today?" today":"")+'" data-k="'+k+'"'+(fut?" disabled":"")+'>'+DN[i]+'<b>'+dd+'</b><span class="f'+(m?"":" e")+'"'+(m?' style="background:'+m.c+'"':"")+'>'+(m?m.e:"·")+'</span></button>';
+  });
+  document.getElementById("week").innerHTML=html;
+  renderSel();
+  var sm=document.getElementById("sum");
+  if(!vals.length){sm.innerHTML='<span style="margin:0 auto;font-weight:600">toque num dia para registrar ♡</span>';return}
+  var avg=vals.reduce(function(a,b){return a+b},0)/vals.length;
+  sm.innerHTML='<span>'+mood(avg).e+' média '+avg.toFixed(1)+'</span><div class="dist">'+dist(vals)+'</div><span>'+vals.length+'/7</span>';
+}
+function renderSel(){
+  var r=data[sel]||{},d=new Date(+sel.slice(0,4),+sel.slice(5,7)-1,+sel.slice(8)),dw=(d.getDay()+6)%7;
+  document.getElementById("pick").innerHTML=MOODS.map(function(m){return '<button class="m'+(r.m==m.v?" on":"")+'" data-v="'+m.v+'" title="'+m.l+'">'+m.e+'</button>'}).join("");
+  document.getElementById("cap").textContent=DF[dw]+", "+d.getDate()+" · "+(r.m?MOODS[r.m-1].l:"como foi o dia?");
+  document.getElementById("note").value=r.n||"";
+}
+function renderMonths(){
+  document.getElementById("legend").innerHTML=MOODS.map(function(m){return '<span>'+m.e+' '+m.l+'</span>'}).join("");
+  var by={};
+  Object.keys(data).forEach(function(k){if(data[k]&&data[k].m){var mk=k.slice(0,7);(by[mk]=by[mk]||[]).push(data[k].m)}});
+  var ks=Object.keys(by).sort(),box=document.getElementById("months");
+  if(!ks.length){box.innerHTML='<div class="empty">ainda sem registros ♡<br>marque alguns dias na aba semana</div>';return}
+  var out="",av=function(a){return a.reduce(function(x,y){return x+y},0)/a.length};
+  for(var i=ks.length-1;i>=Math.max(0,ks.length-12);i--){
+    var v=by[ks[i]],a=av(v),dl="";
+    if(i>0){var df=a-av(by[ks[i-1]]);dl='<span class="dl '+(df>=0?"up":"down")+'">'+(df>=0?"▲ +":"▼ ")+df.toFixed(1)+'</span>'}else dl='<span class="dl"></span>';
+    out+='<div class="mrow"><div class="mn">'+MN[+ks[i].slice(5,7)-1].slice(0,3)+'<small>'+ks[i].slice(2,4)+'</small></div><div class="av">'+mood(a).e+' '+a.toFixed(1)+'</div><div class="dist">'+dist(v)+'</div>'+dl+'</div>';
+  }
+  box.innerHTML=out;
+}
+function tab(w){
+  document.getElementById("vw").classList.toggle("hide",!w);document.getElementById("vm").classList.toggle("hide",w);
+  document.getElementById("tw").classList.toggle("on",w);document.getElementById("tm").classList.toggle("on",!w);
+  if(w)renderWeek();else renderMonths();
+}
+document.getElementById("tw").onclick=function(){tab(true)};
+document.getElementById("tm").onclick=function(){tab(false)};
+document.getElementById("prev").onclick=function(){off--;sel=null;renderWeek()};
+document.getElementById("next").onclick=function(){if(off<0){off++;sel=null;renderWeek()}};
+document.getElementById("week").addEventListener("click",function(ev){var b=ev.target.closest(".d");if(!b||b.disabled)return;sel=b.dataset.k;renderWeek()});
+document.getElementById("pick").addEventListener("click",function(ev){
+  var b=ev.target.closest(".m");if(!b)return;
+  var v=+b.dataset.v,r=data[sel]||{};if(r.m==v)delete r.m;else r.m=v;put(sel,r);renderWeek();
+});
+document.getElementById("note").addEventListener("change",function(ev){
+  var r=data[sel]||{};r.n=ev.target.value.trim();if(!r.n)delete r.n;put(sel,r);
+});
+var bk=document.getElementById("bk"),msg=document.getElementById("msg");
+document.querySelector("details").addEventListener("toggle",function(){bk.value=JSON.stringify(data)});
+document.getElementById("cp").onclick=function(){bk.value=JSON.stringify(data);bk.select();
+  try{navigator.clipboard.writeText(bk.value).then(function(){msg.textContent="copiado ♡"},function(){document.execCommand("copy");msg.textContent="copiado ♡"})}catch(e){try{document.execCommand("copy");msg.textContent="copiado ♡"}catch(x){msg.textContent="selecione e copie manualmente"}}};
+document.getElementById("rs").onclick=function(){
+  try{var o=JSON.parse(bk.value);if(!o||typeof o!="object")throw 0;data=o;save();renderWeek();msg.textContent="dados restaurados ♡"}catch(e){msg.textContent="backup inválido"}};
+load();renderWeek();
+</script>
+</body>
+</html>
